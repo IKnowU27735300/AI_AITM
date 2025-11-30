@@ -61,11 +61,6 @@ HOME/
     - The project uses Firebase for backend services. Ensure you have an active internet connection.
     - AI features require a valid Google Gemini API key (configured in `ai-quiz-generator.html`).
 
-## 🔐 Credentials (Demo)
-
-*   **Admin:** `2022aitraining@gmail.com` / `Anish@2000`
-*   **Student:** Sign up or use a test account.
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
