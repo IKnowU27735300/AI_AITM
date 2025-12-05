@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Take Test - AI_AITM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #05050a;
+      --bg-panel: #0f0f1a;
+      --bg-card: rgba(20, 20, 35, 0.6);
+      --primary: #00f3ff;
+      --secondary: #bc13fe;
+      --accent: #ff0055;
+      --success: #00ff9d;
+      --warning: #ffb800;
+      --text-main: #ffffff;
+      --text-muted: #8f90a6;
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --neon-glow: 0 0 10px rgba(0, 243, 255, 0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      background-image: radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.08), transparent 25%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .test-info h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #fff, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .test-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .test-meta i {
+      color: var(--primary);
+      margin-right: 5px;
+    }
+
+    .timer {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      padding: 20px 30px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .timer-label {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+
+    .timer-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .question-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+    }
+
+    .question-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--neon-glow);
+    }
+
+    .question-number {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .question-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 15px;
+      margin: 20px 0;
+      border: 1px solid var(--glass-border);
+    }
+
+    .options {
+      display: grid;
+      gap: 15px;
+    }
+
+    .option {
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .option:hover {
+      border-color: var(--primary);
+      background: rgba(0, 243, 255, 0.05);
+    }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: rgba(0, 243, 255, 0.1);
+    }
+
+    .option-label {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .option.selected .option-label {
+      background: var(--primary);
+      color: #000;
+    }
+
+    .navigation {
+      display: flex;
+      gap: 15px;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: #fff;
+      box-shadow: var(--neon-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 243, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-bar {
+      background: rgba(0, 0, 0, 0.3);
+      height: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      transition: width 0.3s;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .loading i {
+      font-size: 3rem;
+      color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .result-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-modal.show {
+      display: flex;
+    }
+
+    .result-content {
+      background: var(--bg-panel);
+      border-radius: 25px;
+      padding: 50px;
+      max-width: 600px;
+      width: 90%;
+      border: var(--glass-border);
+      text-align: center;
+    }
+
+    .result-score {
+      font-size: 5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--success), var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 20px 0;
+    }
+
+    .result-message {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      color: var(--text-muted);
+    }
+
+    .explanation {
+      background: rgba(0, 255, 157, 0.05);
+      border-left: 3px solid var(--success);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: left;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .explanation strong {
+      color: var(--success);
+      display: block;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loadingScreen" class="loading">
+      <i class="fas fa-spinner"></i>
+      <h2 style="margin-top: 20px;">Loading Test...</h2>
+    </div>
+
+    <div id="testContent" style="display: none;">
+      <div class="test-header">
+        <div class="test-info">
+          <h1 id="testTitle">Test Title</h1>
+          <div class="test-meta">
+            <span><i class="fas fa-book"></i> <span id="testSubject">Subject</span></span>
+            <span><i class="fas fa-question-circle"></i> <span id="questionCount">0</span> Questions</span>
+          </div>
+        </div>
+        <div class="timer">
+          <div class="timer-label">Time Remaining</div>
+          <div class="timer-value" id="timerDisplay">00:00</div>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+      </div>
+
+      <div id="questionsContainer"></div>
+
+      <div class="navigation">
+        <button class="btn btn-secondary" onclick="window.location.href='student-dashboard.html'">
+          <i class="fas fa-arrow-left"></i> Exit Test
+        </button>
+        <button class="btn btn-primary" onclick="submitTest()">
+          <i class="fas fa-check"></i> Submit Test
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Modal -->
+  <div class="result-modal" id="resultModal">
+    <div class="result-content">
+      <i class="fas fa-trophy" style="font-size: 4rem; color: var(--warning);"></i>
+      <div class="result-score" id="resultScore">0%</div>
+      <div class="result-message" id="resultMessage">Great job!</div>
+      <button class="btn btn-primary" onclick="window.location.href='student-dashboard.html'">
+        <i class="fas fa-home"></i> Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqqTzR-3O213c-4FSKdPiwhUHtIq1AVkA",
+      authDomain: "aiaitm.firebaseapp.com",
+      databaseURL: "https://aiaitm-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "aiaitm",
+      storageBucket: "aiaitm.firebasestorage.app",
+      messagingSenderId: "47087388427",
+      appId: "1:47087388427:web:0fd32ed6d59b4a001dc40e"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser = null;
+    let testData = null;
+    let userAnswers = {};
+    let timerInterval = null;
+    let timeRemaining = 0;
+
+    // Get test ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const testId = urlParams.get('testId') || sessionStorage.getItem('currentTestId');
+
+    if (!testId) {
+      alert('No test ID provided');
+      window.location.href = 'student-dashboard.html';
+    }
+
+    // Auth check
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        await loadTest();
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Load test data
+    async function loadTest() {
+      try {
+        const testDoc = await db.collection('tests').doc(testId).get();
+        
+        if (!testDoc.exists) {
+          alert('Test not found');
+          window.location.href = 'student-dashboard.html';
+          return;
+        }
+
+        testData = testDoc.data();
+        
+        // Set test info
+        document.getElementById('testTitle').textContent = testData.title || 'Untitled Test';
+        document.getElementById('testSubject').textContent = testData.subject || 'General';
+        document.getElementById('questionCount').textContent = testData.questions?.length || 0;
+
+        // Initialize timer
+        timeRemaining = (testData.duration || 30) * 60; // Convert minutes to seconds
+        startTimer();
+
+        // Render questions
+        renderQuestions();
+
+        // Show test content
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('testContent').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error loading test:', error);
+        alert('Error loading test: ' + error.message);
+        window.location.href = 'student-dashboard.html';
+      }
+    }
+
+    // Start timer
+    function startTimer() {
+      updateTimerDisplay();
+      
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert('Time is up! Submitting test...');
+          submitTest();
+        }
+      }, 1000);
+    }
+
+    // Update timer display
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeRemaining / 60);
+      const seconds = timeRemaining % 60;
+      document.getElementById('timerDisplay').textContent = 
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      // Change color when time is running out
+      const timerEl = document.querySelector('.timer');
+      if (timeRemaining < 60) {
+        timerEl.style.background = 'linear-gradient(135deg, var(--accent), var(--warning))';
+      }
+    }
+
+    // Render questions
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+
+      if (!testData.questions || testData.questions.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No questions available</p>';
+        return;
+      }
+
+      testData.questions.forEach((question, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        
+        let optionsHTML = '';
+        if (question.options && question.options.length > 0) {
+          optionsHTML = question.options.map((option, optIndex) => `
+            <div class="option ${userAnswers[index] === optIndex ? 'selected' : ''}" 
+                 onclick="selectAnswer(${index}, ${optIndex})">
+              <div class="option-label">${String.fromCharCode(65 + optIndex)}</div>
+              <div>${option}</div>
+            </div>
+          `).join('');
+        }
+
+        card.innerHTML = `
+          <div class="question-number">Question ${index + 1}</div>
+          <div class="question-text">${question.question || 'No question text'}</div>
+          ${question.image ? `<img src="${question.image}" class="question-image" alt="Question image">` : ''}
+          <div class="options">
+            ${optionsHTML}
+          </div>
+        `;
+        
+        container.appendChild(card);
+      });
+
+      updateProgress();
+    }
+
+    // Select answer
+    function selectAnswer(questionIndex, optionIndex) {
+      userAnswers[questionIndex] = optionIndex;
+      renderQuestions();
+    }
+
+    // Update progress bar
+    function updateProgress() {
+      const totalQuestions = testData.questions?.length || 0;
+      const answeredQuestions = Object.keys(userAnswers).length;
+      const progress = totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    // Submit test
+    async function submitTest() {
+      if (!confirm('Are you sure you want to submit the test?')) {
+        return;
+      }
+
+      clearInterval(timerInterval);
+
+      try {
+        // Calculate score
+        let correctAnswers = 0;
+        const totalQuestions = testData.questions?.length || 0;
+
+        testData.questions.forEach((question, index) => {
+          if (userAnswers[index] === question.correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        const scorePercentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+        const scorePoints = Math.round((scorePercentage / 100) * (testData.totalMarks || 100));
+
+        // Save submission to Firestore
+        await db.collection('testSubmissions').add({
+          testId: testId,
+          testTitle: testData.title,
+          studentId: currentUser.uid,
+          answers: userAnswers,
+          score: scorePercentage,
+          scorePoints: scorePoints,
+          correctAnswers: correctAnswers,
+          totalQuestions: totalQuestions,
+          submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update student's total score
+        const studentRef = db.collection('students').doc(currentUser.uid);
+        const studentDoc = await studentRef.get();
+        
+        if (studentDoc.exists) {
+          const currentTotal = studentDoc.data().totalScore || 0;
+          const testsCompleted = (studentDoc.data().testsCompleted || 0) + 1;
+          
+          await studentRef.update({
+            totalScore: currentTotal + scorePoints,
+            testsCompleted: testsCompleted
+          });
+        }
+
+        // Show result
+        showResult(scorePercentage, correctAnswers, totalQuestions);
+
+      } catch (error) {
+        console.error('Error submitting test:', error);
+        alert('Error submitting test: ' + error.message);
+      }
+    }
+
+    // Show result modal
+    function showResult(scorePercentage, correctAnswers, totalQuestions) {
+      document.getElementById('resultScore').textContent = scorePercentage + '%';
+      
+      let message = '';
+      if (scorePercentage >= 90) {
+        message = 'Outstanding! 🎉';
+      } else if (scorePercentage >= 75) {
+        message = 'Great job! 👏';
+      } else if (scorePercentage >= 60) {
+        message = 'Good effort! 👍';
+      } else {
+        message = 'Keep practicing! 💪';
+      }
+      
+      message += `<br><br>You got ${correctAnswers} out of ${totalQuestions} questions correct.`;
+      document.getElementById('resultMessage').innerHTML = message;
+      
+      document.getElementById('resultModal').classList.add('show');
+    }
+
+    // Prevent accidental page close
+    window.addEventListener('beforeunload', (e) => {
+      if (timerInterval) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+  </script>
+</body>
+</html>

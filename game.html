@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Syntax - Epic Typing Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        #game-container {
+            position: relative;
+            width: 90vw;
+            max-width: 1200px;
+            height: 80vh;
+            background: rgba(15, 12, 41, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 40px rgba(108, 92, 231, 0.3);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Back Button */
+        .back-to-dashboard {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-to-dashboard:hover {
+            background: rgba(108, 92, 231, 0.3);
+            transform: translateX(-8px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.5);
+            border-color: rgba(108, 92, 231, 0.5);
+        }
+
+        .back-to-dashboard i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-to-dashboard:hover i {
+            transform: translateX(-4px);
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Menu Screen */
+        .menu-screen h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.3);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 50px;
+            color: rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 800px;
+        }
+
+        .language-btn {
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .language-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .language-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .language-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            border-color: rgba(102, 126, 234, 0.8);
+        }
+
+        .language-btn[data-lang="HTML"] {
+            background: linear-gradient(135deg, rgba(227, 76, 38, 0.3), rgba(240, 101, 41, 0.3));
+        }
+
+        .language-btn[data-lang="CSS"] {
+            background: linear-gradient(135deg, rgba(38, 77, 228, 0.3), rgba(41, 101, 241, 0.3));
+        }
+
+        .language-btn[data-lang="JavaScript"] {
+            background: linear-gradient(135deg, rgba(247, 223, 30, 0.3), rgba(212, 192, 24, 0.3));
+            color: #000;
+        }
+
+        .language-btn[data-lang="Python"] {
+            background: linear-gradient(135deg, rgba(55, 118, 171, 0.3), rgba(42, 95, 140, 0.3));
+        }
+
+        .language-btn[data-lang="Java"] {
+            background: linear-gradient(135deg, rgba(248, 152, 32, 0.3), rgba(214, 130, 27, 0.3));
+        }
+
+        .language-btn[data-lang="C++"] {
+            background: linear-gradient(135deg, rgba(0, 89, 156, 0.3), rgba(0, 68, 130, 0.3));
+        }
+
+        /* Game Screen */
+        #game-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #ui-container div {
+            margin: 8px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .falling-word {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: 800;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: wordFall linear;
+        }
+
+        @keyframes wordFall {
+            from {
+                top: -50px;
+            }
+            to {
+                top: 100%;
+            }
+        }
+
+        .falling-word:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .difficulty-1 {
+            color: #00ff88;
+            border-color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .difficulty-2 {
+            color: #00aaff;
+            border-color: #00aaff;
+            text-shadow: 0 0 10px #00aaff;
+        }
+
+        .difficulty-3 {
+            color: #ffdd00;
+            border-color: #ffdd00;
+            text-shadow: 0 0 10px #ffdd00;
+        }
+
+        .difficulty-4 {
+            color: #ff0066;
+            border-color: #ff0066;
+            text-shadow: 0 0 10px #ff0066;
+        }
+
+        #word-input {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            width: 400px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid rgba(102, 126, 234, 0.5);
+            border-radius: 15px;
+            color: #fff;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #word-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Game Over Screen */
+        .game-over-screen h1 {
+            font-size: 4rem;
+            background: linear-gradient(45deg, #ff0066, #ff6b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .stats-container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-container h2 {
+            font-size: 1.8rem;
+            margin: 10px 0;
+            color: #667eea;
+        }
+
+        .restart-btn {
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            margin-top: 20px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .word-summary {
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .summary-item {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        /* Explosion effect */
+        .explosion {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            animation: explode 0.6s ease-out forwards;
+        }
+
+        @keyframes explode {
+            to {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .language-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .menu-screen h1 {
+                font-size: 3rem;
+            }
+            
+            #word-input {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="particles" id="particles"></div>
+
+    <div id="game-container">
+        <!-- Back to Dashboard Button -->
+        <a href="student-dashboard.html" class="back-to-dashboard">
+            <i class="fas fa-arrow-left"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- Menu Screen -->
+        <div class="screen menu-screen active" id="menu-screen">
+            <h1>SPACE SYNTAX</h1>
+            <p class="subtitle">⚡ Choose Your Programming Language ⚡</p>
+            <div class="language-grid">
+                <button class="language-btn" data-lang="HTML">HTML</button>
+                <button class="language-btn" data-lang="CSS">CSS</button>
+                <button class="language-btn" data-lang="JavaScript">JavaScript</button>
+                <button class="language-btn" data-lang="Python">Python</button>
+                <button class="language-btn" data-lang="Java">Java</button>
+                <button class="language-btn" data-lang="C++">C++</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="screen game-screen" id="game-screen">
+            <div id="game-area">
+                <div id="ui-container">
+                    <div>🎯 Score: <span id="score">0</span></div>
+                    <div>📝 Words: <span id="words-typed">0</span></div>
+                    <div>⏱️ Time: <span id="time">0</span>s</div>
+                    <div>⚡ WPM: <span id="wpm">0</span></div>
+                    <div>💻 <span id="language-display">Python</span></div>
+                </div>
+                <input type="text" id="word-input" autocomplete="off" spellcheck="false" placeholder="Type the falling words...">
+                <div id="instructions">Type words exactly as shown - Game ends if word reaches bottom!</div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div class="screen game-over-screen" id="game-over-screen">
+            <h1>🎮 GAME OVER 🎮</h1>
+            <div class="stats-container">
+                <h2>Final Score: <span id="final-score">0</span></h2>
+                <h2>Words Typed: <span id="final-words">0</span></h2>
+                <h2>Typing Speed: <span id="final-wpm">0</span> WPM</h2>
+            </div>
+            <h3 style="margin: 20px 0;">🏆 Words Mastered 🏆</h3>
+            <div class="word-summary" id="word-summary"></div>
+            <button class="restart-btn" id="restart-btn">🔄 Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Create animated particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Word databases for each language
+        const WORDS = {
+            "HTML": [
+                {word: "<div>", difficulty: 1}, {word: "<p>", difficulty: 1}, {word: "<span>", difficulty: 1},
+                {word: "<header>", difficulty: 2}, {word: "<footer>", difficulty: 2}, {word: "<nav>", difficulty: 2},
+                {word: "<section>", difficulty: 3}, {word: "<article>", difficulty: 3}, {word: "<canvas>", difficulty: 4}
+            ],
+            "CSS": [
+                {word: "color", difficulty: 1}, {word: "margin", difficulty: 1}, {word: "padding", difficulty: 1},
+                {word: "display", difficulty: 2}, {word: "position", difficulty: 2}, {word: "flex", difficulty: 3},
+                {word: "grid", difficulty: 3}, {word: "animation", difficulty: 4}, {word: "transform", difficulty: 4}
+            ],
+            "JavaScript": [
+                {word: "let", difficulty: 1}, {word: "const", difficulty: 1}, {word: "function", difficulty: 1},
+                {word: "if", difficulty: 1}, {word: "for", difficulty: 1}, {word: "async", difficulty: 3},
+                {word: "await", difficulty: 3}, {word: "promise", difficulty: 4}
+            ],
+            "Python": [
+                {word: "print", difficulty: 1}, {word: "def", difficulty: 1}, {word: "class", difficulty: 1},
+                {word: "import", difficulty: 1}, {word: "lambda", difficulty: 3}, {word: "yield", difficulty: 3},
+                {word: "async", difficulty: 3}, {word: "__init__", difficulty: 4}
+            ],
+            "Java": [
+                {word: "public", difficulty: 1}, {word: "class", difficulty: 1}, {word: "void", difficulty: 1},
+                {word: "static", difficulty: 2}, {word: "interface", difficulty: 2}, {word: "extends", difficulty: 2},
+                {word: "implements", difficulty: 3}, {word: "synchronized", difficulty: 4}
+            ],
+            "C++": [
+                {word: "int", difficulty: 1}, {word: "void", difficulty: 1}, {word: "class", difficulty: 1},
+                {word: "public", difficulty: 1}, {word: "virtual", difficulty: 3}, {word: "template", difficulty: 4},
+                {word: "namespace", difficulty: 2}, {word: "operator", difficulty: 3}
+            ]
+        };
+
+        // Game state
+        let gameState = {
+            screen: 'menu',
+            language: 'Python',
+            score: 0,
+            wordsTyped: 0,
+            startTime: 0,
+            words: [],
+            typedWords: [],
+            gameLoop: null,
+            spawnInterval: null
+        };
+
+        // DOM elements
+        const screens = {
+            menu: document.getElementById('menu-screen'),
+            game: document.getElementById('game-screen'),
+            gameOver: document.getElementById('game-over-screen')
+        };
+
+        const elements = {
+            score: document.getElementById('score'),
+            wordsTyped: document.getElementById('words-typed'),
+            time: document.getElementById('time'),
+            wpm: document.getElementById('wpm'),
+            languageDisplay: document.getElementById('language-display'),
+            wordInput: document.getElementById('word-input'),
+            gameArea: document.getElementById('game-area'),
+            finalScore: document.getElementById('final-score'),
+            finalWords: document.getElementById('final-words'),
+            finalWpm: document.getElementById('final-wpm'),
+            wordSummary: document.getElementById('word-summary')
+        };
+
+        // Event listeners
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                gameState.language = btn.dataset.lang;
+                startGame();
+            });
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            switchScreen('menu');
+        });
+
+        elements.wordInput.addEventListener('input', checkWord);
+
+        // Functions
+        function switchScreen(screen) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[screen].classList.add('active');
+            gameState.screen = screen;
+        }
+
+        function startGame() {
+            // Reset game state
+            gameState.score = 0;
+            gameState.wordsTyped = 0;
+            gameState.startTime = Date.now();
+            gameState.words = [];
+            gameState.typedWords = [];
+            
+            // Clear any existing words
+            document.querySelectorAll('.falling-word').forEach(w => w.remove());
+            
+            // Update UI
+            elements.score.textContent = '0';
+            elements.wordsTyped.textContent = '0';
+            elements.time.textContent = '0';
+            elements.wpm.textContent = '0';
+            elements.languageDisplay.textContent = gameState.language;
+            elements.wordInput.value = '';
+            
+            // Switch to game screen
+            switchScreen('game');
+            elements.wordInput.focus();
+            
+            // Start game loop
+            gameState.gameLoop = setInterval(updateGame, 100);
+            gameState.spawnInterval = setInterval(spawnWord, 2000);
+            spawnWord(); // Spawn first word immediately
+        }
+
+        function spawnWord() {
+            if (gameState.words.length >= 5) return;
+            
+            const wordList = WORDS[gameState.language];
+            const wordData = wordList[Math.floor(Math.random() * wordList.length)];
+            
+            const wordEl = document.createElement('div');
+            wordEl.className = `falling-word difficulty-${wordData.difficulty}`;
+            wordEl.textContent = wordData.word;
+            wordEl.style.left = (Math.random() * 80 + 10) + '%';
+            wordEl.style.animationDuration = (8 - wordData.difficulty) + 's';
+            
+            elements.gameArea.appendChild(wordEl);
+            
+            gameState.words.push({
+                element: wordEl,
+                word: wordData.word,
+                difficulty: wordData.difficulty
+            });
+            
+            // Check if word reached bottom
+            setTimeout(() => {
+                if (wordEl.parentNode) {
+                    endGame('Word reached the bottom!');
+                }
+            }, (8 - wordData.difficulty) * 1000);
+        }
+
+        function checkWord() {
+            const input = elements.wordInput.value.trim();
+            if (!input) return;
+            
+            const matchedWord = gameState.words.find(w => w.word === input);
+            
+            if (matchedWord) {
+                // Correct word!
+                const points = matchedWord.difficulty * 10;
+                gameState.score += points;
+                gameState.wordsTyped++;
+                
+                // Create explosion effect
+                createExplosion(matchedWord.element);
+                
+                // Remove word
+                matchedWord.element.remove();
+                gameState.words = gameState.words.filter(w => w !== matchedWord);
+                
+                // Track typed words
+                if (!gameState.typedWords.some(w => w.word === matchedWord.word)) {
+                    gameState.typedWords.push(matchedWord);
+                }
+                
+                // Update UI
+                elements.score.textContent = gameState.score;
+                elements.wordsTyped.textContent = gameState.wordsTyped;
+                elements.wordInput.value = '';
+            }
+        }
+
+        function createExplosion(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'explosion';
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                particle.style.background = getComputedStyle(element).color;
+                
+                const angle = (Math.PI * 2 * i) / 12;
+                const distance = 50 + Math.random() * 50;
+                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+
+        function updateGame() {
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            elements.time.textContent = elapsed;
+            
+            if (elapsed > 0) {
+                const wpm = Math.floor((gameState.wordsTyped / elapsed) * 60);
+                elements.wpm.textContent = wpm;
+            }
+        }
+
+        function endGame(reason) {
+            clearInterval(gameState.gameLoop);
+            clearInterval(gameState.spawnInterval);
+            
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const wpm = elapsed > 0 ? Math.floor((gameState.wordsTyped / elapsed) * 60) : 0;
+            
+            elements.finalScore.textContent = gameState.score;
+            elements.finalWords.textContent = gameState.wordsTyped;
+            elements.finalWpm.textContent = wpm;
+            
+            // Show typed words
+            elements.wordSummary.innerHTML = gameState.typedWords.length > 0
+                ? gameState.typedWords.map(w => `
+                    <div class="summary-item">
+                        ${w.word} - ${'⭐'.repeat(w.difficulty)} (${w.difficulty * 10} pts)
+                    </div>
+                `).join('')
+                : '<div class="summary-item">No words typed!</div>';
+            
+            switchScreen('gameOver');
+        }
+    </script>
+</body>
+</html>

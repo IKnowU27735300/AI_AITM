@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI_AITM — Student Signup</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preload" as="image" href="aitm.png">
+  <style>
+    :root {
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --accent: #6c5ce7;
+      --accent-glow: rgba(108, 92, 231, 0.4);
+      --text: #f8f9fa;
+      --text-muted: #adb5bd;
+      --danger: #ff6b6b;
+      --success: #55efc4;
+      --card-bg: rgba(30, 30, 50, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary), #16213e);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .signup-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                  0 0 20px var(--accent-glow);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signup-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, transparent 20%, var(--bg-secondary) 200%);
+      z-index: -1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .brand h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #55efc4, #74b9ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon {
+     height: 26.4px;
+     width: 26.4px;
+     object-fit: cover;
+     border-radius: 50%;
+     margin-right: 12px;
+     border: 2px solid rgba(255, 255, 255, 0.1);
+     box-shadow: 0 0 8px rgba(108, 92, 231, 0.3);
+     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .logo-icon:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(108, 92, 231, 0.5);
+    }
+
+    .brand p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    .form-group {
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      font-size: 1rem;
+      color: var(--text);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    select option {
+      background: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: rgba(108, 92, 231, 0.05);
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin: 22px 0;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent), #55efc4);
+      color: white;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(108, 92, 231, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(108, 92, 231, 0.4);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .link-btn {
+      background: none;
+      color: var(--accent);
+      font-size: 0.95rem;
+      text-decoration: none;
+      padding: 6px 0;
+      border: none;
+      cursor: pointer;
+      display: inline;
+      font-weight: 500;
+    }
+
+    .link-btn:hover {
+      text-decoration: underline;
+    }
+
+    .message {
+      margin: 20px 0;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success {
+      background: rgba(85, 239, 196, 0.15);
+      color: #2ecc71;
+      border: 1px solid rgba(85, 239, 196, 0.3);
+    }
+
+    .error {
+      background: rgba(255, 107, 107, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    .info {
+      background: rgba(108, 92, 231, 0.15);
+      color: #a29bfe;
+      border: 1px solid rgba(108, 92, 231, 0.3);
+    }
+
+    #verificationPending {
+      display: none;
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    #verificationPending h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--success);
+    }
+
+    #verificationPending p {
+      margin: 10px 0;
+      color: var(--text-muted);
+    }
+
+    .resend {
+      background: none;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      margin: 15px 0;
+      transition: all 0.3s;
+    }
+
+    .resend:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    @media (max-width: 480px) {
+      .signup-container {
+        padding: 30px 20px;
+        margin: 10px;
+      }
+      .brand h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <a href="index.html" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Login
+    </a>
+    
+    <div class="brand">
+      <h1>
+        <img src="aitm.png" alt="AITM Logo" class="logo-icon" />
+        Student Signup
+      </h1>
+      <p>Create your AI_AITM account</p>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <!-- Signup Form -->
+    <div id="signupForm">
+      <div class="form-group">
+        <label for="name"><i class="fas fa-signature"></i> Full Name</label>
+        <input type="text" id="name" placeholder="Enter your full name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="usn"><i class="fas fa-id-card"></i> USN (University Seat Number)</label>
+        <input type="text" id="usn" placeholder="Enter your USN" required />
+      </div>
+
+      <div class="form-group">
+        <label for="year"><i class="fas fa-graduation-cap"></i> Year</label>
+        <select id="year" required>
+          <option value="" disabled selected>Select your year</option>
+          <option value="1st">1st Year</option>
+          <option value="2nd">2nd Year</option>
+          <option value="3rd">3rd Year</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        <input type="email" id="email" placeholder="name@institute.edu" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password"><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="password" placeholder="Create a password (min 6 chars)" required minlength="6" />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm your password" required />
+      </div>
+
+      <button class="btn" onclick="signUp()">
+        <i class="fas fa-graduation-cap"></i> Create Account
+      </button>
+    </div>
+
+    <!-- Verification Pending Screen -->
+    <div id="verificationPending">
+      <h3><i class="fas fa-envelope-open-text"></i> Verify Your Email</h3>
+      <p>We sent a verification link to:</p>
+      <p><strong id="sentEmail" style="color: var(--accent);"></strong></p>
+      <p>Check your inbox (and spam folder) to verify before logging in.</p>
+      <button class="resend" onclick="resendVerification()">
+        <i class="fas fa-redo"></i> Resend Verification Email
+      </button>
+      <p>
+        <button class="link-btn" onclick="goToLogin()">
+          <i class="fas fa-sign-in-alt"></i> Go to Login
+        </button>
+      </p>
+    </div>
+
+    <p>
+      Already have an account? 
+      <button class="link-btn" onclick="goToLogin()">
+        <i class="fas fa-sign-in-alt"></i> Login Here
+      </button>
+    </p>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqqTzR-3O213c-4FSKdPiwhUHtIq1AVkA",
+      authDomain: "aiaitm.firebaseapp.com",
+      databaseURL: "https://aiaitm-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "aiaitm",
+      storageBucket: "aiaitm.firebasestorage.app",
+      messagingSenderId: "47087388427",
+      appId: "1:47087388427:web:0fd32ed6d59b4a001dc40e",
+      measurementId: "G-YTZCLQY6RS"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // UI Elements
+    const nameInput = document.getElementById('name');
+    const usnInput = document.getElementById('usn');
+    const yearSelect = document.getElementById('year');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const messageDiv = document.getElementById('message');
+    const signupForm = document.getElementById('signupForm');
+    const verificationPending = document.getElementById('verificationPending');
+    const sentEmailDisplay = document.getElementById('sentEmail');
+
+    // Show message
+    function showMessage(text, type) {
+      messageDiv.textContent = text;
+      messageDiv.className = `message ${type}`;
+      messageDiv.style.display = 'block';
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    // Show verification screen
+    function showVerificationPending(email) {
+      signupForm.style.display = 'none';
+      verificationPending.style.display = 'block';
+      sentEmailDisplay.textContent = email;
+    }
+
+    // Resend verification email
+    async function resendVerification() {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          await user.sendEmailVerification();
+          showMessage("✅ Verification email resent! Check your inbox.", "success");
+        } catch (error) {
+          showMessage("❌ Failed to resend: " + error.message, "error");
+        }
+      }
+    }
+
+    // Signup Handler
+    async function signUp() {
+      const name = nameInput.value.trim();
+      const usn = usnInput.value.trim();
+      const year = yearSelect.value;
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const confirmPassword = confirmPasswordInput.value.trim();
+
+      if (!name || !usn || !year || !email || !password || !confirmPassword) {
+        showMessage("Please fill in all fields.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage("Passwords do not match.", "error");
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage("Password must be at least 6 characters.", "error");
+        return;
+      }
+
+      try {
+        showMessage("Creating your account...", "info");
+
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        await user.updateProfile({ displayName: name });
+        
+        // Save student data to Firestore
+        await db.collection('students').doc(user.uid).set({
+          name: name,
+          usn: usn,
+          year: year,
+          email: email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        await user.sendEmailVerification();
+
+        showVerificationPending(email);
+
+        showMessage("📧 Verification email sent! Please verify to activate your account.", "success");
+
+      } catch (error) {
+        showMessage("Signup failed: " + error.message, "error");
+      }
+    }
+
+    // Go to Login
+    function goToLogin() {
+      window.location.href = 'index.html';
+    }
+
+    // Optional: If user is already logged in & verified, redirect
+    auth.onAuthStateChanged(user => {
+      if (user && user.emailVerified) {
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>

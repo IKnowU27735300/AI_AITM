@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI_AITM - Programming Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.4);
+            --text: #f8f9fa;
+            --text-muted: #adb5bd;
+            --danger: #ff6b6b;
+            --success: #55efc4;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 60px 20px 40px;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(0, 0, 0, 0));
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.8s ease;
+            position: relative;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateX(-5px);
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon-wrapper {
+            font-size: 5rem;
+            color: var(--accent);
+            animation: floatIcon 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(108, 92, 231, 0.5));
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { 
+                transform: translateY(0px);
+            }
+            50% { 
+                transform: translateY(-20px);
+            }
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, #fff, var(--accent));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 20px auto 0;
+        }
+
+        /* Language Grid */
+        .language-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+            animation: slideUp 0.6s ease 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .language-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px var(--accent-glow);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            transition: transform 0.4s ease;
+        }
+
+        .language-card:hover .card-icon {
+            transform: scale(1.1) rotate(10deg);
+            color: #fff;
+        }
+
+        .language-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .language-card p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .badge {
+            background: rgba(108, 92, 231, 0.2);
+            color: var(--accent);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--accent);
+        }
+
+        /* Features Section */
+        .features {
+            margin-top: 50px;
+            text-align: center;
+            animation: slideUp 0.6s ease 0.4s both;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-item i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .feature-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .feature-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .back-btn {
+                position: static;
+                width: calc(100% - 40px);
+                margin: 0 20px 20px;
+                justify-content: center;
+            }
+            .logo h1 {
+                font-size: 2rem;
+            }
+            .logo-icon-wrapper {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <button class="back-btn" onclick="window.location.href='student-dashboard.html';">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </button>
+            <div class="logo">
+                <div class="logo-icon-wrapper">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h1>Programming Language Library</h1>
+            </div>
+            <p class="subtitle">Your comprehensive guide to programming languages - explore functions, methods, and libraries with interactive examples</p>
+        </header>
+
+        <!-- Language Selection Grid -->
+        <section class="language-selection">
+            <div class="language-card" onclick="window.location.href='pylib.html';">
+                <div class="card-icon">
+                    <i class="fab fa-python"></i>
+                </div>
+                <h2>Python</h2>
+                <p>High-level, interpreted language for general-purpose programming</p>
+                <span class="badge">500+ Functions</span>
+            </div>
+
+            <div class="language-card" onclick="window.location.href='Clib.html';">
+                <div class="card-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h2>C</h2>
+                <p>Procedural language for system programming and embedded systems</p>
+                <span class="badge">300+ Functions</span>
+            </div>
+
+            <div class="language-card" onclick="window.location.href='html.html';">
+                <div class="card-icon">
+                    <i class="fab fa-html5"></i>
+                </div>
+                <h2>HTML</h2>
+                <p>Markup language for structuring web content</p>
+                <span class="badge">100+ Elements</span>
+            </div>
+
+            <div class="language-card" onclick="window.location.href='css.html';">
+                <div class="card-icon">
+                    <i class="fab fa-css3-alt"></i>
+                </div>
+                <h2>CSS</h2>
+                <p>Style sheet language for web design and layout</p>
+                <span class="badge">400+ Properties</span>
+            </div>
+
+            <div class="language-card" onclick="window.location.href='java.html';">
+                <div class="card-icon">
+                    <i class="fab fa-java"></i>
+                </div>
+                <h2>Java</h2>
+                <p>Object-oriented language for enterprise applications</p>
+                <span class="badge">700+ Methods</span>
+            </div>
+
+            <div class="language-card" onclick="window.location.href='r.html';">
+                <div class="card-icon">
+                    <i class="fab fa-r-project"></i>
+                </div>
+                <h2>R</h2>
+                <p>Statistical computing and data analysis language</p>
+                <span class="badge">800+ Functions</span>
+            </div>
+
+            <div class="language-card" onclick="window.location.href='cpp.html';">
+                <div class="card-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h2>C++</h2>
+                <p>Object-oriented extension of C with high performance</p>
+                <span class="badge">600+ Functions</span>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <h2>Why Use This Library?</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-search"></i>
+                    <h3>Smart Search</h3>
+                    <p>Quickly find any function with real-time search and filtering</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-book"></i>
+                    <h3>Comprehensive Docs</h3>
+                    <p>Detailed explanations with code examples for every element</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-sort-alpha-down"></i>
+                    <h3>Organized Content</h3>
+                    <p>All functions arranged alphabetically in collapsible categories</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-code"></i>
+                    <h3>Syntax Highlighting</h3>
+                    <p>Beautiful code examples with syntax highlighting</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Create animated particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 60; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Add ripple effect on card click
+        document.querySelectorAll('.language-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                ripple.style.width = ripple.style.height = '100px';
+                ripple.style.left = e.offsetX - 50 + 'px';
+                ripple.style.top = e.offsetY - 50 + 'px';
+                ripple.style.animation = 'ripple 0.6s ease-out';
+                ripple.style.pointerEvents = 'none';
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                from {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

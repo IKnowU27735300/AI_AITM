@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Reference Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --accent: #00599c; /* C++ specific accent */
+            --accent-glow: rgba(0, 89, 156, 0.4);
+            --text: #f8f9fa;
+            --text-muted: #adb5bd;
+            --danger: #ff6b6b;
+            --success: #55efc4;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .language-header {
+            background: linear-gradient(135deg, rgba(0, 89, 156, 0.2), rgba(0, 68, 130, 0.2));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .language-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 89, 156, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .language-header h1 {
+            font-size: 3rem;
+            color: var(--text);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .language-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #00599c;
+            position: relative;
+            z-index: 1;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .language-header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.1) rotate(-10deg);
+            box-shadow: 0 5px 20px var(--accent-glow);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            animation: slideUp 0.6s ease 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            padding: 10px;
+            color: var(--text);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-bar button {
+            background: #00599c;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .search-bar button:hover {
+            background: #004482;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 89, 156, 0.4);
+        }
+
+        /* Categories */
+        .category-container {
+            margin: 0; /* Reset margin */
+            background: transparent; /* Reset background */
+            box-shadow: none; /* Reset shadow */
+        }
+
+        .category-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease both;
+        }
+
+        .category-header:nth-child(1) { animation-delay: 0.3s; }
+        .category-header:nth-child(3) { animation-delay: 0.4s; }
+        .category-header:nth-child(5) { animation-delay: 0.5s; }
+
+        .category-header:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(5px);
+        }
+
+        .category-header h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .category-count {
+            background: #00599c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .category-header i {
+            font-size: 1.5rem;
+            color: #00599c;
+            transition: transform 0.3s ease;
+        }
+
+        .category-header.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 15px 15px;
+            margin-top: -20px; /* Connect to header */
+            margin-bottom: 20px;
+        }
+
+        .category-content.show {
+            max-height: 5000px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-top: none;
+        }
+
+        .function-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .function-item:last-child {
+            border-bottom: none;
+        }
+
+        .function-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(10px);
+            border-radius: 10px;
+        }
+
+        .function-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .function-name i {
+            color: var(--accent);
+        }
+
+        .function-description {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .function-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            border-left: 4px solid #00599c;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: var(--text);
+            font-size: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .language-header h1 { font-size: 2rem; }
+            .language-icon { font-size: 3rem; }
+            .category-header h2 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- Language Header -->
+        <div class="language-header">
+            <button id="back-button" class="back-button" onclick="window.location.href='library.html';">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <i class="fab fa-cuttlefish language-icon"></i>
+            <h1>C++ Reference Library</h1>
+            <p>Comprehensive alphabetical reference of C++ standard library and features</p>
+        </div>
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search for functions or classes...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+        <!-- Categories -->
+        <div class="category-container">
+            <!-- Input/Output -->
+            <div class="category-header" onclick="toggleCategory('io')">
+                <h2>Input/Output <span class="category-count">10+</span></h2>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div id="io" class="category-content">
+                <div class="function-list"></div>
+            </div>
+            <!-- STL Containers -->
+            <div class="category-header" onclick="toggleCategory('stl')">
+                <h2>STL Containers <span class="category-count">15+</span></h2>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div id="stl" class="category-content">
+                <div class="function-list"></div>
+            </div>
+            <!-- Algorithms -->
+            <div class="category-header" onclick="toggleCategory('algorithms')">
+                <h2>Algorithms <span class="category-count">20+</span></h2>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div id="algorithms" class="category-content">
+                <div class="function-list"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Create animated particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 60; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        const cppFunctions = {
+            "io": [
+                {
+                    name: "cout",
+                    description: "Standard output stream.",
+                    example: "std::cout << \"Hello World\";"
+                },
+                {
+                    name: "cin",
+                    description: "Standard input stream.",
+                    example: "int x;\nstd::cin >> x;"
+                },
+                {
+                    name: "endl",
+                    description: "Insert newline and flush stream.",
+                    example: "std::cout << \"Hello\" << std::endl;"
+                }
+            ],
+            "stl": [
+                {
+                    name: "vector",
+                    description: "Dynamic array implementation.",
+                    example: "std::vector<int> v = {1, 2, 3};"
+                },
+                {
+                    name: "map",
+                    description: "Associative container (key-value pairs).",
+                    example: "std::map<string, int> m;"
+                },
+                {
+                    name: "string",
+                    description: "String class.",
+                    example: "std::string s = \"Hello\";"
+                }
+            ],
+            "algorithms": [
+                {
+                    name: "sort",
+                    description: "Sorts elements in a range.",
+                    example: "std::sort(v.begin(), v.end());"
+                },
+                {
+                    name: "find",
+                    description: "Finds a value in a range.",
+                    example: "auto it = std::find(v.begin(), v.end(), 5);"
+                },
+                {
+                    name: "max",
+                    description: "Returns the larger of two values.",
+                    example: "std::max(10, 20);"
+                }
+            ]
+        };
+
+        function toggleCategory(id) {
+            const content = document.getElementById(id);
+            const header = content.previousElementSibling;
+            content.classList.toggle('show');
+            header.classList.toggle('expanded');
+            
+            if (content.classList.contains('show') && content.querySelector('.function-list').innerHTML === '') {
+                renderFunctions(id);
+            }
+        }
+
+        function renderFunctions(categoryId) {
+            const list = document.querySelector(`#${categoryId} .function-list`);
+            const functions = cppFunctions[categoryId];
+            
+            list.innerHTML = functions.map(func => `
+                <div class="function-item">
+                    <div class="function-name">
+                        <i class="fab fa-cuttlefish"></i> ${func.name}
+                    </div>
+                    <div class="function-description">${func.description}</div>
+                    <div class="function-example">${func.example.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;')}</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

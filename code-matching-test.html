@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Code Matching Test - AI_AITM</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #05050a;
+      --bg-panel: #0f0f1a;
+      --bg-card: rgba(20, 20, 35, 0.6);
+      --primary: #00f3ff;
+      --secondary: #bc13fe;
+      --accent: #ff0055;
+      --success: #00ff9d;
+      --text-main: #ffffff;
+      --text-muted: #8f90a6;
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --neon-glow: 0 0 10px rgba(0, 243, 255, 0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      background-image: radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.08), transparent 25%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #fff, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 25px;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-weight: 500; }
+    .form-control {
+      width: 100%; padding: 12px 15px;
+      background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px; color: var(--text-main); font-family: 'Inter', sans-serif;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+
+    .btn {
+      padding: 12px 24px; border-radius: 10px; border: none;
+      cursor: pointer; font-weight: 600; font-family: 'Outfit', sans-serif;
+      display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: #fff; box-shadow: var(--neon-glow);
+    }
+    .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+    .drag-drop-zone {
+      border: 2px dashed var(--text-muted);
+      border-radius: 15px;
+      padding: 60px 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .drag-drop-zone:hover, .drag-drop-zone.drag-over {
+      border-color: var(--primary);
+      background: rgba(0, 243, 255, 0.05);
+    }
+
+    .code-preview {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .code-line {
+      font-family: 'Courier New', monospace;
+      padding: 5px 10px;
+      margin: 2px 0;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--primary);
+      border-radius: 3px;
+    }
+
+    .language-badge {
+      display: inline-block;
+      padding: 5px 15px;
+      background: var(--primary);
+      color: #000;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: color 0.3s;
+    }
+
+    .back-btn:hover { color: var(--primary); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    #previewSection {
+      display: none;
+    }
+
+    #previewSection.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="admin.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div class="header">
+      <h1><i class="fas fa-puzzle-piece"></i> Create Code Matching Test</h1>
+      <p style="color: var(--text-muted);">Import code file and create a shuffled code matching test</p>
+    </div>
+
+    <!-- Upload Section -->
+    <div id="uploadSection">
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">Test Details</h3>
+        
+        <div class="form-group">
+          <label>Test Title</label>
+          <input type="text" id="testTitle" class="form-control" placeholder="e.g., Java Code Matching Challenge" required>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Year</label>
+            <select id="testYear" class="form-control" required>
+              <option value="1st">1st Year</option>
+              <option value="2nd">2nd Year</option>
+              <option value="3rd">3rd Year</option>
+              <option value="4th">4th Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Duration (minutes)</label>
+            <input type="number" id="testDuration" class="form-control" value="30" required>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="testDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" id="testTime" class="form-control" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">Import Code File</h3>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Upload a .json or .txt file containing code snippets</p>
+        
+        <div id="dragDropZone" class="drag-drop-zone">
+          <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+          <p style="font-size: 1.1rem; margin-bottom: 10px;">Drop your file here or click to upload</p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Supported formats: .json, .txt</p>
+          <input type="file" id="fileInput" accept=".json,.txt" style="display: none;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div id="previewSection">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>Code Preview</h3>
+          <button class="btn btn-outline" onclick="resetUpload()">
+            <i class="fas fa-redo"></i> Upload Different File
+          </button>
+        </div>
+
+        <div id="codePreviewContainer"></div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+          <button class="btn btn-outline" onclick="window.location.href='admin.html'">Cancel</button>
+          <button class="btn btn-primary" onclick="createTest()" style="min-width: 200px;">
+            <i class="fas fa-check"></i> Create Test
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqqTzR-3O213c-4FSKdPiwhUHtIq1AVkA",
+      authDomain: "aiaitm.firebaseapp.com",
+      projectId: "aiaitm",
+      storageBucket: "aiaitm.firebasestorage.app",
+      messagingSenderId: "47087388427",
+      appId: "1:47087388427:web:0fd32ed6d59b4a001dc40e"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let currentUser = null;
+    let parsedCodeData = null;
+
+    // Auth check
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        currentUser = user;
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Drag and drop setup
+    const dragDropZone = document.getElementById('dragDropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    dragDropZone.addEventListener('click', () => fileInput.click());
+
+    dragDropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dragDropZone.classList.add('drag-over');
+    });
+
+    dragDropZone.addEventListener('dragleave', () => {
+      dragDropZone.classList.remove('drag-over');
+    });
+
+    dragDropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragDropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
+
+    function handleFile(file) {
+      const fileName = file.name;
+      const fileExtension = fileName.split('.').pop().toLowerCase();
+
+      if (fileExtension !== 'json' && fileExtension !== 'txt') {
+        alert('Please upload a .json or .txt file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target.result;
+        parseCodeFile(content, fileExtension);
+      };
+      reader.readAsText(file);
+    }
+
+    function parseCodeFile(content, fileType) {
+      try {
+        let codeSnippets = [];
+
+        if (fileType === 'json') {
+          const jsonData = JSON.parse(content);
+          // Expecting format: { "language": "python", "code": "line1\nline2\n..." }
+          // or array of such objects
+          if (Array.isArray(jsonData)) {
+            codeSnippets = jsonData;
+          } else {
+            codeSnippets = [jsonData];
+          }
+        } else {
+          // TXT format: Auto-detect language and split by blank lines
+          const sections = content.split(/\n\s*\n/);
+          sections.forEach(section => {
+            const lines = section.trim().split('\n');
+            if (lines.length > 0) {
+              const language = detectLanguage(section);
+              codeSnippets.push({
+                language: language,
+                code: section.trim()
+              });
+            }
+          });
+        }
+
+        // Process and shuffle code
+        parsedCodeData = processCodeSnippets(codeSnippets);
+        displayPreview(parsedCodeData);
+        
+        document.getElementById('uploadSection').style.display = 'none';
+        document.getElementById('previewSection').classList.add('active');
+      } catch (error) {
+        alert('Error parsing file: ' + error.message);
+      }
+    }
+
+    function detectLanguage(code) {
+      // Simple language detection based on keywords
+      if (code.includes('def ') || code.includes('import ') || code.includes('print(')) return 'Python';
+      if (code.includes('public class') || code.includes('System.out')) return 'Java';
+      if (code.includes('#include') || code.includes('cout')) return 'C++';
+      if (code.includes('function') || code.includes('const ') || code.includes('let ')) return 'JavaScript';
+      if (code.includes('<?php')) return 'PHP';
+      return 'Code';
+    }
+
+    function processCodeSnippets(snippets) {
+      return snippets.map(snippet => {
+        const lines = snippet.code.split('\n').filter(line => line.trim() !== '');
+        const correctOrder = lines.map((line, index) => ({ line, index }));
+        const shuffledLines = [...correctOrder].sort(() => Math.random() - 0.5);
+
+        return {
+          language: snippet.language,
+          correctOrder: correctOrder,
+          shuffledLines: shuffledLines
+        };
+      });
+    }
+
+    function displayPreview(codeData) {
+      const container = document.getElementById('codePreviewContainer');
+      container.innerHTML = '';
+
+      codeData.forEach((snippet, index) => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '30px';
+        div.innerHTML = `
+          <span class="language-badge">${snippet.language}</span>
+          <div class="code-preview">
+            <h4 style="color: var(--primary); margin-bottom: 15px;">Original Code (${snippet.correctOrder.length} lines)</h4>
+            ${snippet.correctOrder.map(item => `
+              <div class="code-line">${item.line}</div>
+            `).join('')}
+            <h4 style="color: var(--accent); margin-top: 20px; margin-bottom: 15px;">Shuffled for Students</h4>
+            ${snippet.shuffledLines.map(item => `
+              <div class="code-line" style="border-left-color: var(--accent);">${item.line}</div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function resetUpload() {
+      document.getElementById('uploadSection').style.display = 'block';
+      document.getElementById('previewSection').classList.remove('active');
+      fileInput.value = '';
+      parsedCodeData = null;
+    }
+
+    async function createTest() {
+      const title = document.getElementById('testTitle').value;
+      const year = document.getElementById('testYear').value;
+      const duration = parseInt(document.getElementById('testDuration').value);
+      const date = document.getElementById('testDate').value;
+      const time = document.getElementById('testTime').value;
+
+      if (!title || !date || !time) {
+        alert('Please fill in all test details');
+        return;
+      }
+
+      if (!parsedCodeData || parsedCodeData.length === 0) {
+        alert('No code data to save');
+        return;
+      }
+
+      try {
+        const testData = {
+          type: 'Code Matching',
+          title: title,
+          subject: 'Programming',
+          year: year,
+          date: date,
+          time: time,
+          duration: duration,
+          totalMarks: parsedCodeData.length * 10,
+          codeSnippets: parsedCodeData,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdBy: currentUser.uid,
+          status: 'scheduled'
+        };
+
+        await db.collection('tests').add(testData);
+        alert('Code Matching Test created successfully!');
+        window.location.href = 'admin.html';
+      } catch (error) {
+        alert('Error creating test: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>

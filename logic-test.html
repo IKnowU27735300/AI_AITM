@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Puzzle Test - AI_AITM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.4);
+            --text: #f8f9fa;
+            --text-muted: #adb5bd;
+            --success: #55efc4;
+            --danger: #ff6b6b;
+            --warning: #feca57;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, #fff, var(--accent));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Question Navigation */
+        .question-nav {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .question-nav h3 {
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .question-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .question-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .question-pill.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+
+        .question-pill.completed {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .question-pill.failed {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* Main Content */
+        .test-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Logic Panel */
+        .logic-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            height: fit-content;
+        }
+
+        .logic-panel h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logic-description {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .attempts-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .attempts-info p {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .attempts-count {
+            font-weight: bold;
+            color: var(--warning);
+        }
+
+        /* Code Boxes */
+        .code-area {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .code-area h3 {
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-boxes {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .code-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            cursor: move;
+            transition: all 0.3s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .code-box:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+        }
+
+        .code-box.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .code-box.correct {
+            background: rgba(85, 239, 196, 0.1);
+            border-color: var(--success);
+            animation: pulse-success 0.5s ease;
+        }
+
+        .code-box.incorrect {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--danger);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes pulse-success {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .code-box .drag-handle {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .code-box .code-text {
+            margin-left: 25px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: linear-gradient(135deg, var(--accent), #8e44ad);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px var(--accent-glow);
+        }
+
+        .submit-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--danger);
+        }
+
+        .modal-content .correct-sequence {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .modal-content .correct-sequence .code-line {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(85, 239, 196, 0.1);
+            border-left: 3px solid var(--success);
+            border-radius: 5px;
+        }
+
+        .modal-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .test-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-puzzle-piece"></i> Logic Puzzle Test</h1>
+            <button class="back-btn" onclick="window.location.href='student-dashboard.html';">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </button>
+        </div>
+
+        <!-- Question Navigation -->
+        <div class="question-nav">
+            <h3>Questions</h3>
+            <div class="question-pills" id="questionPills">
+                <!-- Pills will be generated dynamically -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="test-content">
+            <!-- Code Area -->
+            <div class="code-area">
+                <h3><i class="fas fa-code"></i> Arrange the Code in Correct Order</h3>
+                <div class="code-boxes" id="codeBoxes">
+                    <!-- Code boxes will be generated dynamically -->
+                </div>
+                <button class="submit-btn" id="submitBtn" onclick="checkAnswer()">
+                    <i class="fas fa-check-circle"></i> Submit Answer
+                </button>
+            </div>
+
+            <!-- Logic Panel -->
+            <div class="logic-panel">
+                <h3><i class="fas fa-lightbulb"></i> Logic</h3>
+                <div class="logic-description" id="logicDescription">
+                    Select a question to begin
+                </div>
+                <div class="attempts-info">
+                    <p>
+                        <span>Attempts Remaining:</span>
+                        <span class="attempts-count" id="attemptsCount">5</span>
+                    </p>
+                    <p>
+                        <span>Current Question:</span>
+                        <span id="currentQuestionNum">-</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-times-circle"></i> Game Over!</h2>
+            <p>You've used all 5 attempts. Here's the correct sequence:</p>
+            <div class="correct-sequence" id="correctSequence">
+                <!-- Correct sequence will be shown here -->
+            </div>
+            <button class="modal-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let testQuestions = [];
+        let currentQuestionIndex = 0;
+        let attemptsRemaining = 5;
+        let questionResults = {};
+
+        // Drag and drop variables
+        let draggedElement = null;
+
+        // Check authentication
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                loadTest();
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Load test from URL parameter
+        async function loadTest() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const testId = urlParams.get('testId');
+
+            if (!testId) {
+                alert('No test ID provided');
+                window.location.href = 'student-dashboard.html';
+                return;
+            }
+
+            try {
+                const testDoc = await db.collection('tests').doc(testId).get();
+                if (!testDoc.exists) {
+                    alert('Test not found');
+                    window.location.href = 'student-dashboard.html';
+                    return;
+                }
+
+                const testData = testDoc.data();
+                testQuestions = testData.questions || [];
+                
+                if (testQuestions.length === 0) {
+                    alert('This test has no questions');
+                    return;
+                }
+
+                renderQuestionPills();
+                loadQuestion(0);
+            } catch (error) {
+                console.error('Error loading test:', error);
+                alert('Error loading test');
+            }
+        }
+
+        // Render question navigation pills
+        function renderQuestionPills() {
+            const pillsContainer = document.getElementById('questionPills');
+            pillsContainer.innerHTML = '';
+
+            testQuestions.forEach((q, index) => {
+                const pill = document.createElement('div');
+                pill.className = 'question-pill';
+                pill.textContent = `Q${index + 1}`;
+                pill.onclick = () => loadQuestion(index);
+                pillsContainer.appendChild(pill);
+            });
+        }
+
+        // Load a specific question
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            attemptsRemaining = 5;
+            
+            const question = testQuestions[index];
+            
+            // Update UI
+            document.getElementById('logicDescription').textContent = question.logic || 'Match the code lines in the correct order';
+            document.getElementById('currentQuestionNum').textContent = `${index + 1} / ${testQuestions.length}`;
+            document.getElementById('attemptsCount').textContent = attemptsRemaining;
+            
+            // Update active pill
+            document.querySelectorAll('.question-pill').forEach((pill, i) => {
+                pill.classList.remove('active');
+                if (i === index) pill.classList.add('active');
+            });
+            
+            // Shuffle and render code boxes
+            renderCodeBoxes(question.codeLines);
+        }
+
+        // Render code boxes (shuffled)
+        function renderCodeBoxes(codeLines) {
+            const container = document.getElementById('codeBoxes');
+            container.innerHTML = '';
+            
+            // Shuffle the code lines
+            const shuffled = [...codeLines].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach((line, index) => {
+                const box = document.createElement('div');
+                box.className = 'code-box';
+                box.draggable = true;
+                box.dataset.code = line;
+                box.innerHTML = `
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    <div class="code-text">${line}</div>
+                `;
+                
+                // Drag events
+                box.addEventListener('dragstart', handleDragStart);
+                box.addEventListener('dragover', handleDragOver);
+                box.addEventListener('drop', handleDrop);
+                box.addEventListener('dragend', handleDragEnd);
+                
+                container.appendChild(box);
+            });
+        }
+
+        // Drag and drop handlers
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement !== this) {
+                const allBoxes = [...document.querySelectorAll('.code-box')];
+                const draggedIndex = allBoxes.indexOf(draggedElement);
+                const targetIndex = allBoxes.indexOf(this);
+                
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedElement, this);
+                }
+            }
+            
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        // Check answer
+        function checkAnswer() {
+            const question = testQuestions[currentQuestionIndex];
+            const correctSequence = question.codeLines;
+            
+            const boxes = document.querySelectorAll('.code-box');
+            const userSequence = Array.from(boxes).map(box => box.dataset.code);
+            
+            // Check if correct
+            const isCorrect = JSON.stringify(userSequence) === JSON.stringify(correctSequence);
+            
+            // Visual feedback
+            boxes.forEach((box, index) => {
+                box.classList.remove('correct', 'incorrect');
+                if (userSequence[index] === correctSequence[index]) {
+                    box.classList.add('correct');
+                } else {
+                    box.classList.add('incorrect');
+                }
+            });
+            
+            if (isCorrect) {
+                questionResults[currentQuestionIndex] = true;
+                document.querySelectorAll('.question-pill')[currentQuestionIndex].classList.add('completed');
+                
+                setTimeout(() => {
+                    alert('Correct! Well done!');
+                    if (currentQuestionIndex < testQuestions.length - 1) {
+                        loadQuestion(currentQuestionIndex + 1);
+                    } else {
+                        finishTest();
+                    }
+                }, 1000);
+            } else {
+                attemptsRemaining--;
+                document.getElementById('attemptsCount').textContent = attemptsRemaining;
+                
+                if (attemptsRemaining === 0) {
+                    questionResults[currentQuestionIndex] = false;
+                    document.querySelectorAll('.question-pill')[currentQuestionIndex].classList.add('failed');
+                    showGameOver(correctSequence);
+                }
+            }
+        }
+
+        // Show game over modal
+        function showGameOver(correctSequence) {
+            const modal = document.getElementById('gameOverModal');
+            const sequenceContainer = document.getElementById('correctSequence');
+            
+            sequenceContainer.innerHTML = correctSequence.map((line, i) => 
+                `<div class="code-line">${i + 1}. ${line}</div>`
+            ).join('');
+            
+            modal.classList.add('show');
+        }
+
+        // Next question
+        function nextQuestion() {
+            document.getElementById('gameOverModal').classList.remove('show');
+            
+            if (currentQuestionIndex < testQuestions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                finishTest();
+            }
+        }
+
+        // Finish test
+        async function finishTest() {
+            const correctCount = Object.values(questionResults).filter(r => r === true).length;
+            const score = Math.round((correctCount / testQuestions.length) * 100);
+            
+            alert(`Test completed! Your score: ${score}%`);
+            
+            // Save results to Firestore
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const testId = urlParams.get('testId');
+                
+                await db.collection('testSubmissions').add({
+                    studentId: currentUser.uid,
+                    testId: testId,
+                    score: score,
+                    results: questionResults,
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                window.location.href = 'student-dashboard.html';
+            } catch (error) {
+                console.error('Error saving results:', error);
+                alert('Error saving results');
+            }
+        }
+    </script>
+</body>
+</html>

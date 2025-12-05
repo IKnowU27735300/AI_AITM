@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Quiz Generator - AI_AITM</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #05050a;
+      --bg-panel: #0f0f1a;
+      --bg-card: rgba(20, 20, 35, 0.6);
+      --primary: #00f3ff;
+      --secondary: #bc13fe;
+      --accent: #ff0055;
+      --success: #00ff9d;
+      --text-main: #ffffff;
+      --text-muted: #8f90a6;
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --neon-glow: 0 0 10px rgba(0, 243, 255, 0.5);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      background-image: radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.08), transparent 25%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #fff, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: var(--glass-border);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: #fff;
+      box-shadow: var(--neon-glow);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(188, 19, 254, 0.6);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .question-preview {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .question-preview h4 {
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .option {
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .option.correct {
+      background: rgba(0, 255, 157, 0.1);
+      border-left: 3px solid var(--success);
+    }
+
+    #generatedQuestions {
+      display: none;
+    }
+
+    #generatedQuestions.active {
+      display: block;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: color 0.3s;
+    }
+
+    .back-btn:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="admin.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div class="header">
+      <h1><i class="fas fa-robot"></i> AI Quiz Generator</h1>
+      <p style="color: var(--text-muted);">Generate aptitude questions using AI based on your prompt</p>
+    </div>
+
+    <!-- Input Form -->
+    <div id="inputForm">
+      <div class="card">
+        <h3 style="margin-bottom: 30px;">Enter Quiz Details</h3>
+        
+        <form id="aiQuizForm">
+          <div class="form-group">
+            <label>Prompt / Topic <span style="color: var(--accent);">*</span></label>
+            <textarea 
+              id="prompt" 
+              class="form-control" 
+              placeholder="E.g., Create 10 aptitude questions on logical reasoning for engineering students. Include questions on patterns, sequences, and problem-solving."
+              required
+            ></textarea>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="subject" class="form-control" placeholder="E.g., Aptitude" value="Aptitude">
+            </div>
+
+            <div class="form-group">
+              <label>Number of Questions</label>
+              <input type="number" id="numQuestions" class="form-control" value="10" min="5" max="50">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Difficulty Level</label>
+              <select id="difficulty" class="form-control">
+                <option value="Easy">Easy</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Target Year</label>
+              <select id="year" class="form-control">
+                <option value="1st">1st Year</option>
+                <option value="2nd" selected>2nd Year</option>
+                <option value="3rd">3rd Year</option>
+                <option value="4th">4th Year</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-magic"></i> Generate Questions
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <h3 style="color: var(--primary);">AI is generating your questions...</h3>
+      <p style="color: var(--text-muted); margin-top: 10px;">This may take a few moments</p>
+    </div>
+
+    <!-- Generated Questions -->
+    <div id="generatedQuestions">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+          <h3>Generated Questions</h3>
+          <button onclick="regenerate()" class="btn btn-outline">
+            <i class="fas fa-redo"></i> Regenerate
+          </button>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+          <button onclick="saveQuiz()" class="btn btn-primary">
+            <i class="fas fa-check"></i> Approve & Save as Test
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    // ============================================
+    // GOOGLE GEMINI API CONFIGURATION
+    // ============================================
+    // TODO: Replace with your actual Google Gemini API Key
+    // Get your API key from: https://makersuite.google.com/app/apikey
+    const GEMINI_API_KEY = 'AIzaSyDfJ7P2ox2JTkGwVw3fZZocXQvu_Bn2THY';
+    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDqqTzR-3O213c-4FSKdPiwhUHtIq1AVkA",
+      authDomain: "aiaitm.firebaseapp.com",
+      projectId: "aiaitm",
+      storageBucket: "aiaitm.firebasestorage.app",
+      messagingSenderId: "47087388427",
+      appId: "1:47087388427:web:0fd32ed6d59b4a001dc40e"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let currentUser = null;
+    let generatedData = null;
+
+    // Auth check
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        currentUser = user;
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Form submission
+    document.getElementById('aiQuizForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const prompt = document.getElementById('prompt').value;
+      const subject = document.getElementById('subject').value;
+      const numQuestions = parseInt(document.getElementById('numQuestions').value);
+      const difficulty = document.getElementById('difficulty').value;
+      const year = document.getElementById('year').value;
+
+      // Show loading
+      document.getElementById('inputForm').style.display = 'none';
+      document.getElementById('loading').classList.add('active');
+
+      try {
+        // Call Google Gemini API
+        const questions = await generateQuestionsWithGemini(prompt, subject, numQuestions, difficulty, year);
+        
+        displayQuestions(questions);
+        
+        generatedData = {
+          prompt,
+          subject,
+          difficulty,
+          year,
+          questions
+        };
+
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('generatedQuestions').classList.add('active');
+      } catch (error) {
+        console.error('Error generating questions:', error);
+        alert('Error generating questions: ' + error.message + '\n\nPlease check your API key and try again.');
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('inputForm').style.display = 'block';
+      }
+    });
+
+    // Generate questions using Google Gemini API
+    async function generateQuestionsWithGemini(userPrompt, subject, numQuestions, difficulty, year) {
+      // Check if API key is configured
+      if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+        throw new Error('Please configure your Google Gemini API key in the code. Get it from: https://makersuite.google.com/app/apikey');
+      }
+
+      // Construct the prompt for Gemini
+      const systemPrompt = `You are an expert aptitude test creator for engineering students.
+
+TASK: Create ${numQuestions} completely UNIQUE and DIFFERENT aptitude questions.
+
+CONTEXT:
+- Subject: ${subject}
+- Difficulty: ${difficulty}
+- Target: ${year} year engineering students
+- Topic guidance: ${userPrompt}
+
+CRITICAL RULES:
+1. Each question must be COMPLETELY DIFFERENT - no similar questions allowed
+2. Cover DIVERSE topics: logical reasoning, numerical ability, verbal reasoning, data interpretation, pattern recognition, puzzles, series completion, etc.
+3. Use DIFFERENT scenarios and contexts for each question
+4. DO NOT repeat question types or patterns
+5. DO NOT include the user's prompt or instructions in your questions
+6. Write clear, standalone questions that make sense on their own
+
+GOOD EXAMPLES OF DIVERSE QUESTIONS:
+- "If all roses are flowers and some flowers fade quickly, which statement must be true?"
+- "A train travels 120 km in 2 hours. What is its average speed in m/s?"
+- "Find the missing number in the series: 5, 10, 20, 40, ?"
+- "Choose the word most similar in meaning to 'METICULOUS': A) Careless B) Precise C) Quick D) Lazy"
+- "In a class of 50 students, 30 play cricket and 25 play football. If 10 play both, how many play neither?"
+
+BAD EXAMPLES (DO NOT DO THIS):
+- Repeating the same sequence question multiple times
+- Including phrases like "based on the prompt" or "as requested" in questions
+- Creating variations of the same question with minor changes
+
+OUTPUT FORMAT:
+Return ONLY a valid JSON array (no markdown, no code blocks, no extra text):
+[
+  {
+    "question": "Clear, standalone question text",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correctAnswer": 0,
+    "explanation": "Why this answer is correct"
+  }
+]
+
+Generate ${numQuestions} questions now. Make each one completely unique!`;
+
+      // Make API call to Gemini
+      const response = await fetch(GEMINI_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: systemPrompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.9,  // Higher temperature for more diversity
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Gemini API Error: ${errorData.error?.message || 'Unknown error'}`);
+      }
+
+      const data = await response.json();
+      
+      // DEBUG: Log the full API response
+      console.log('🔍 Full Gemini API Response:', data);
+      
+      // Extract the generated text
+      const generatedText = data.candidates[0]?.content?.parts[0]?.text;
+      
+      // DEBUG: Log the extracted text
+      console.log('📝 Generated Text from Gemini:', generatedText);
+      
+      if (!generatedText) {
+        throw new Error('No response from Gemini API');
+      }
+
+      // Parse the JSON response
+      let questions;
+      try {
+        // Remove markdown code blocks if present
+        let cleanedText = generatedText.trim();
+        cleanedText = cleanedText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+        
+        // DEBUG: Log cleaned text before parsing
+        console.log('🧹 Cleaned Text (before JSON parse):', cleanedText);
+        
+        questions = JSON.parse(cleanedText);
+        
+        // DEBUG: Log parsed questions
+        console.log('✅ Parsed Questions Array:', questions);
+        console.log('📊 Number of questions:', questions.length);
+      } catch (parseError) {
+        console.error('❌ Failed to parse Gemini response:', generatedText);
+        console.error('❌ Parse Error:', parseError);
+        throw new Error('Failed to parse AI response. Please try again.');
+      }
+
+      // Validate the questions format
+      if (!Array.isArray(questions) || questions.length === 0) {
+        throw new Error('Invalid questions format received from AI');
+      }
+
+      // Validate each question has required fields
+      questions.forEach((q, index) => {
+        if (!q.question || !Array.isArray(q.options) || q.options.length !== 4 || 
+            typeof q.correctAnswer !== 'number' || !q.explanation) {
+          throw new Error(`Invalid question format at index ${index}`);
+        }
+      });
+      
+      // Check for duplicate questions
+      const questionTexts = questions.map(q => q.question.toLowerCase().trim());
+      const uniqueQuestions = new Set(questionTexts);
+      
+      // Also check for duplicate core content (removing common prefixes)
+      const coreQuestions = questions.map(q => {
+        let core = q.question.toLowerCase().trim();
+        // Remove common prefixes like "Q1:", "Verbal Question based on...", etc.
+        core = core.replace(/^q\d+:\s*/i, '');
+        core = core.replace(/^(verbal|numerical|logical|reasoning|aptitude)\s+(question|problem)\s+based\s+on\s+[^:]+:\s*/i, '');
+        core = core.replace(/^(verbal|numerical|logical|reasoning|aptitude)\s+(question|problem):\s*/i, '');
+        return core;
+      });
+      
+      const uniqueCoreQuestions = new Set(coreQuestions);
+      
+      console.log('📝 Full question texts:', questionTexts);
+      console.log('🔍 Core question texts (cleaned):', coreQuestions);
+      
+      if (uniqueQuestions.size !== questions.length) {
+        console.warn('⚠️ Duplicate questions detected (exact match)!');
+        console.warn('Question texts:', questionTexts);
+        throw new Error(`AI generated ${questions.length - uniqueQuestions.size} exact duplicate question(s). Please click "Regenerate" to get unique questions.`);
+      }
+      
+      if (uniqueCoreQuestions.size !== questions.length) {
+        console.warn('⚠️ Duplicate core content detected!');
+        console.warn('Core questions:', coreQuestions);
+        throw new Error(`AI generated ${questions.length - uniqueCoreQuestions.size} question(s) with duplicate content (same question with different labels). Please click "Regenerate" to get truly unique questions.`);
+      }
+      
+      console.log('✅ All questions are unique!');
+
+      return questions;
+    }
+
+    function displayQuestions(questions) {
+      // DEBUG: Log what we're about to display
+      console.log('🎨 displayQuestions called with:', questions);
+      console.log('🎨 Number of questions to display:', questions.length);
+      
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+
+      questions.forEach((q, index) => {
+        console.log(`🎨 Rendering question ${index + 1}:`, q.question);
+        
+        const div = document.createElement('div');
+        div.className = 'question-preview';
+        div.innerHTML = `
+          <h4>Question ${index + 1}</h4>
+          <p style="margin-bottom: 15px; line-height: 1.6;">${q.question}</p>
+          ${q.options.map((opt, i) => `
+            <div class="option ${i === q.correctAnswer ? 'correct' : ''}">
+              ${String.fromCharCode(65 + i)}. ${opt}
+              ${i === q.correctAnswer ? '<i class="fas fa-check" style="color: var(--success); float: right;"></i>' : ''}
+            </div>
+          `).join('')}
+          <p style="margin-top: 15px; color: var(--text-muted); font-size: 0.9rem;">
+            <strong>Explanation:</strong> ${q.explanation}
+          </p>
+        `;
+        container.appendChild(div);
+      });
+      
+      console.log('✅ Finished rendering all questions');
+    }
+
+    function regenerate() {
+      document.getElementById('generatedQuestions').classList.remove('active');
+      document.getElementById('inputForm').style.display = 'block';
+    }
+
+    async function saveQuiz() {
+      if (!generatedData || !currentUser) return;
+
+      try {
+        const testData = {
+          type: 'Aptitude',
+          title: `AI Generated ${generatedData.subject} Quiz`,
+          subject: generatedData.subject,
+          year: generatedData.year,
+          difficulty: generatedData.difficulty,
+          questions: generatedData.questions,
+          totalMarks: generatedData.questions.length * 10,
+          duration: generatedData.questions.length * 2,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdBy: currentUser.uid,
+          generatedByAI: true,
+          prompt: generatedData.prompt,
+          status: 'draft'
+        };
+
+        await db.collection('tests').add(testData);
+        alert('Quiz saved successfully! Redirecting to dashboard...');
+        window.location.href = 'admin.html';
+      } catch (error) {
+        alert('Error saving quiz: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Library - Programming Reference</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.4);
+            --text: #f8f9fa;
+            --text-muted: #adb5bd;
+            --danger: #ff6b6b;
+            --success: #55efc4;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, rgba(55, 118, 171, 0.2), rgba(74, 134, 194, 0.2));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: var(--text);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #3776ab;
+            position: relative;
+            z-index: 1;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.1) rotate(-10deg);
+            box-shadow: 0 5px 20px var(--accent-glow);
+        }
+
+        /* Search Bar */
+        .search-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            animation: slideUp 0.6s ease 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-container input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            padding: 10px;
+            color: var(--text);
+        }
+
+        .search-container input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-container button {
+            background: #3776ab;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .search-container button:hover {
+            background: #2c6091;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(55, 118, 171, 0.4);
+        }
+
+        /* Categories */
+        .category {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease both;
+        }
+
+        .category:nth-child(1) { animation-delay: 0.3s; }
+        .category:nth-child(2) { animation-delay: 0.4s; }
+        .category:nth-child(3) { animation-delay: 0.5s; }
+        .category:nth-child(4) { animation-delay: 0.6s; }
+        .category:nth-child(5) { animation-delay: 0.7s; }
+
+        .category-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-header:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(5px);
+        }
+
+        .category-header h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .category-header .count {
+            background: #3776ab;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .category-header .chevron {
+            font-size: 1.5rem;
+            color: #3776ab;
+            transition: transform 0.3s ease;
+        }
+
+        .category-header.active .chevron {
+            transform: rotate(180deg);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .category-content.show {
+            max-height: 5000px;
+        }
+
+        .function-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .function-item:last-child {
+            border-bottom: none;
+        }
+
+        .function-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(10px);
+        }
+
+        .function-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #64b5f6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .function-name i {
+            color: var(--accent);
+        }
+
+        .function-desc {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .function-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            border-left: 4px solid #3776ab;
+        }
+
+        .function-example .keyword { color: #569cd6; }
+        .function-example .string { color: #ce9178; }
+        .function-example .comment { color: #6a9955; }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: var(--text);
+            font-size: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .header .icon { font-size: 3rem; }
+            .category-header h2 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="library.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <i class="fab fa-python icon"></i>
+            <h1>Python Library</h1>
+            <p>Comprehensive reference for Python functions and methods</p>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for functions, methods, or keywords...">
+            <button onclick="searchFunctions()"><i class="fas fa-search"></i> Search</button>
+        </div>
+
+        <!-- Categories -->
+        <div id="categoriesContainer">
+            <!-- Built-in Functions -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <i class="fas fa-code"></i>
+                        Built-in Functions
+                        <span class="count">69+</span>
+                    </h2>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="category-content">
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> print()</div>
+                        <div class="function-desc">Prints the specified message to the screen or other standard output device.</div>
+                        <div class="function-example"><span class="keyword">print</span>(<span class="string">"Hello, World!"</span>)  <span class="comment"># Output: Hello, World!</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> len()</div>
+                        <div class="function-desc">Returns the number of items in an object.</div>
+                        <div class="function-example"><span class="keyword">len</span>([<span class="string">1</span>, <span class="string">2</span>, <span class="string">3</span>])  <span class="comment"># Returns 3</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> type()</div>
+                        <div class="function-desc">Returns the type of an object.</div>
+                        <div class="function-example"><span class="keyword">type</span>(<span class="string">"hello"</span>)  <span class="comment"># Returns &lt;class 'str'&gt;</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> range()</div>
+                        <div class="function-desc">Generates a sequence of numbers.</div>
+                        <div class="function-example"><span class="keyword">list</span>(<span class="keyword">range</span>(<span class="string">5</span>))  <span class="comment"># Returns [0, 1, 2, 3, 4]</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> input()</div>
+                        <div class="function-desc">Reads a line from input and returns it as a string.</div>
+                        <div class="function-example">name = <span class="keyword">input</span>(<span class="string">"Enter name: "</span>)  <span class="comment"># Prompts user</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- String Methods -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <i class="fas fa-font"></i>
+                        String Methods
+                        <span class="count">47+</span>
+                    </h2>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="category-content">
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> str.upper()</div>
+                        <div class="function-desc">Converts all characters in the string to uppercase.</div>
+                        <div class="function-example"><span class="string">"hello"</span>.upper()  <span class="comment"># Returns "HELLO"</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> str.lower()</div>
+                        <div class="function-desc">Converts all characters in the string to lowercase.</div>
+                        <div class="function-example"><span class="string">"HELLO"</span>.lower()  <span class="comment"># Returns "hello"</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> str.split()</div>
+                        <div class="function-desc">Splits the string into a list of substrings.</div>
+                        <div class="function-example"><span class="string">"a,b,c"</span>.split(<span class="string">","</span>)  <span class="comment"># Returns ['a', 'b', 'c']</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> str.join()</div>
+                        <div class="function-desc">Joins elements of an iterable with the string as separator.</div>
+                        <div class="function-example"><span class="string">"-"</span>.join([<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>])  <span class="comment"># Returns "a-b-c"</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> str.replace()</div>
+                        <div class="function-desc">Replaces occurrences of a substring with another substring.</div>
+                        <div class="function-example"><span class="string">"hello"</span>.replace(<span class="string">"l"</span>, <span class="string">"L"</span>)  <span class="comment"># Returns "heLLo"</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Methods -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <i class="fas fa-list"></i>
+                        List Methods
+                        <span class="count">11+</span>
+                    </h2>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="category-content">
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> list.append()</div>
+                        <div class="function-desc">Adds an element to the end of the list.</div>
+                        <div class="function-example">lst = [<span class="string">1</span>, <span class="string">2</span>]<br>lst.append(<span class="string">3</span>)  <span class="comment"># lst becomes [1, 2, 3]</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> list.extend()</div>
+                        <div class="function-desc">Extends the list by appending elements from an iterable.</div>
+                        <div class="function-example">lst = [<span class="string">1</span>, <span class="string">2</span>]<br>lst.extend([<span class="string">3</span>, <span class="string">4</span>])  <span class="comment"># lst becomes [1, 2, 3, 4]</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> list.insert()</div>
+                        <div class="function-desc">Inserts an element at a specified position.</div>
+                        <div class="function-example">lst = [<span class="string">1</span>, <span class="string">3</span>]<br>lst.insert(<span class="string">1</span>, <span class="string">2</span>)  <span class="comment"># lst becomes [1, 2, 3]</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> list.remove()</div>
+                        <div class="function-desc">Removes the first occurrence of a value.</div>
+                        <div class="function-example">lst = [<span class="string">1</span>, <span class="string">2</span>, <span class="string">3</span>]<br>lst.remove(<span class="string">2</span>)  <span class="comment"># lst becomes [1, 3]</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> list.sort()</div>
+                        <div class="function-desc">Sorts the list in ascending order.</div>
+                        <div class="function-example">lst = [<span class="string">3</span>, <span class="string">1</span>, <span class="string">2</span>]<br>lst.sort()  <span class="comment"># lst becomes [1, 2, 3]</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dictionary Methods -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <i class="fas fa-book"></i>
+                        Dictionary Methods
+                        <span class="count">11+</span>
+                    </h2>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="category-content">
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> dict.get()</div>
+                        <div class="function-desc">Returns the value for a key if it exists, else returns default value.</div>
+                        <div class="function-example">d = {<span class="string">"a"</span>: <span class="string">1</span>}<br>d.get(<span class="string">"a"</span>)  <span class="comment"># Returns 1</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> dict.keys()</div>
+                        <div class="function-desc">Returns a view object containing the dictionary's keys.</div>
+                        <div class="function-example">d = {<span class="string">"a"</span>: <span class="string">1</span>, <span class="string">"b"</span>: <span class="string">2</span>}<br>d.keys()  <span class="comment"># Returns dict_keys(['a', 'b'])</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> dict.values()</div>
+                        <div class="function-desc">Returns a view object containing the dictionary's values.</div>
+                        <div class="function-example">d = {<span class="string">"a"</span>: <span class="string">1</span>, <span class="string">"b"</span>: <span class="string">2</span>}<br>d.values()  <span class="comment"># Returns dict_values([1, 2])</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> dict.items()</div>
+                        <div class="function-desc">Returns a view object containing the dictionary's key-value pairs.</div>
+                        <div class="function-example">d = {<span class="string">"a"</span>: <span class="string">1</span>}<br>d.items()  <span class="comment"># Returns dict_items([('a', 1)])</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> dict.update()</div>
+                        <div class="function-desc">Updates the dictionary with key-value pairs from another dictionary.</div>
+                        <div class="function-example">d = {<span class="string">"a"</span>: <span class="string">1</span>}<br>d.update({<span class="string">"b"</span>: <span class="string">2</span>})  <span class="comment"># d becomes {'a': 1, 'b': 2}</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Operations -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <h2>
+                        <i class="fas fa-file"></i>
+                        File Operations
+                        <span class="count">8+</span>
+                    </h2>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="category-content">
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> open()</div>
+                        <div class="function-desc">Opens a file and returns a file object.</div>
+                        <div class="function-example">f = <span class="keyword">open</span>(<span class="string">"file.txt"</span>, <span class="string">"r"</span>)  <span class="comment"># Opens file for reading</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> file.read()</div>
+                        <div class="function-desc">Reads the entire content of the file.</div>
+                        <div class="function-example">content = f.read()  <span class="comment"># Reads all content</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> file.write()</div>
+                        <div class="function-desc">Writes a string to the file.</div>
+                        <div class="function-example">f.write(<span class="string">"Hello"</span>)  <span class="comment"># Writes "Hello" to file</span></div>
+                    </div>
+                    <div class="function-item">
+                        <div class="function-name"><i class="fas fa-terminal"></i> file.close()</div>
+                        <div class="function-desc">Closes the file.</div>
+                        <div class="function-example">f.close()  <span class="comment"># Closes the file</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="noResults" class="no-results" style="display: none;">
+            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px;"></i>
+            <p>No results found. Try a different search term.</p>
+        </div>
+    </div>
+
+    <script>
+        // Create animated particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 60; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        function toggleCategory(header) {
+            const content = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+            
+            // Close all categories
+            document.querySelectorAll('.category-header').forEach(h => {
+                h.classList.remove('active');
+                h.nextElementSibling.classList.remove('show');
+            });
+            
+            // Open clicked category if it wasn't active
+            if (!isActive) {
+                header.classList.add('active');
+                content.classList.add('show');
+            }
+        }
+
+        function searchFunctions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categories = document.querySelectorAll('.category');
+            const noResults = document.getElementById('noResults');
+            let hasResults = false;
+
+            if (!searchTerm) {
+                categories.forEach(cat => cat.style.display = 'block');
+                noResults.style.display = 'none';
+                return;
+            }
+
+            categories.forEach(category => {
+                const functions = category.querySelectorAll('.function-item');
+                let categoryHasMatch = false;
+
+                functions.forEach(func => {
+                    const name = func.querySelector('.function-name').textContent.toLowerCase();
+                    const desc = func.querySelector('.function-desc').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || desc.includes(searchTerm)) {
+                        func.style.display = 'block';
+                        categoryHasMatch = true;
+                        hasResults = true;
+                    } else {
+                        func.style.display = 'none';
+                    }
+                });
+
+                if (categoryHasMatch) {
+                    category.style.display = 'block';
+                    category.querySelector('.category-header').classList.add('active');
+                    category.querySelector('.category-content').classList.add('show');
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+
+            noResults.style.display = hasResults ? 'none' : 'block';
+        }
+
+        // Allow Enter key to search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFunctions();
+            }
+        });
+
+        // Real-time search
+        document.getElementById('searchInput').addEventListener('input', searchFunctions);
+    </script>
+</body>
+</html>
