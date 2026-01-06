@@ -68,21 +68,6 @@ AI_AITITM is a next-generation, AI-powered educational platform designed to enha
 | **Coding IDE** | Monaco Editor (VS Code engine) |
 | **Styling**    | FontAwesome, Google Fonts (`Inter`, `Outfit`) |
 
----
-
-## 🤝 Contributing
-
-Contributions are **welcome**! Whether you're improving the proctoring logic, adding new programming languages, or enhancing UI/UX:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4) Push to the branch (`git push origin feature/AmazingFeature`)
-5) Open a **Pull Request**
-
-> Please ensure your code follows our style guide and includes appropriate tests.
-
----
 
 ## 📄 License
 
