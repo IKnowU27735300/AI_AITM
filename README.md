@@ -33,23 +33,6 @@ AI_AITM is a comprehensive, AI-powered educational platform designed to enhance 
 - **AI Engine:** Google Gemini Pro API
 - **Icons & Fonts:** FontAwesome, Google Fonts (Inter, Outfit)
 
-## 📂 Project Structure
-
-```
-HOME/
-├── index.html              # Main Landing & Login Page
-├── admin.html              # Admin Dashboard
-├── student-dashboard.html  # Student Dashboard
-├── test.html               # Test Creation (AI & Manual)
-├── take-test.html          # Test Taking Interface
-├── result.html             # Detailed Result View
-├── ai-quiz-generator.html  # AI Quiz Creation Tool
-├── library.html            # Resource Library Hub
-├── coding-platform.html    # Coding Practice Area
-├── game.html               # Educational Games
-└── ... (Language specific pages: cpp.html, java.html, etc.)
-```
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
