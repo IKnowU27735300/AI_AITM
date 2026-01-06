@@ -1,38 +1,93 @@
-# AI_AITM - AI Training Portal
+# 🧠 AI_AITM – AI Training Portal
 
-AI_AITM is a comprehensive, AI-powered educational platform designed to enhance the learning experience for engineering students. It integrates advanced AI capabilities with traditional learning management tools to provide a dynamic and personalized training environment.
+> **An intelligent, secure, and personalized learning ecosystem for engineering students**
+
+AI_AITITM is a next-generation, AI-powered educational platform designed to enhance learning and assessment for engineering students. It integrates **AI-driven content generation**, a **secure coding environment**, and an **advanced proctoring system** to deliver dynamic, adaptive, and cheat-resistant training experiences.
+
+---
 
 ## 🚀 Key Features
 
-### 🤖 AI-Powered Quiz Generator
-- **Gemini API Integration:** Leverages Google's Gemini Pro model to generate unique, high-quality aptitude questions instantly.
-- **Customizable Assessments:** Generate quizzes based on specific prompts, subjects, difficulty levels (Easy, Medium, Hard), and target student years.
-- **Smart Duplicate Detection:** Built-in logic to ensure every generated question is unique.
-- **One-Click Deployment:** Admins can review, approve, and save generated quizzes directly to the student portal.
+### 🧠 AI-Powered Quiz & Coding Problem Generator
+- **Gemini API Integration**: Uses Google’s **Gemini Pro** to generate unique aptitude questions and real-world coding problems (Python, Java, C++, JavaScript, etc.).
+- **Customizable Assessments**: Filter by subject, difficulty (Easy/Medium/Hard), and student year.
+- **Smart Duplicate Detection**: Ensures semantic uniqueness across all generated content.
+- **One-Click Deployment**: Admins can approve and publish quizzes directly to the student portal.
 
-### � Real-time Notification System
-- **Instant Alerts:**
-    - Students are notified immediately when a new test is available.
-    - Admins receive real-time alerts when a student starts a test.
-- **Interactive UI:** Notification bell with unread count badge in the dashboard header.
+### 💻 Integrated Coding Platform
+- **In-Browser IDE** with syntax highlighting, auto-complete, and real-time error feedback.
+- **Auto-Grading Engine**: Validates code against test cases, checks time/space complexity, and output correctness.
+- **Multi-Language Support**: Python, Java, C++, JavaScript, C#, and more.
+- **Curated Problem Bank**: DSA, system design, and project-based challenges.
+
+### 👁️ AI-Driven Proctoring System (Secure Exam Mode)
+> *Prevents cheating with real-time behavioral and environmental monitoring*
+
+- **🔒 Browser Lockdown**:  
+  Students **cannot exit the test window**, open new tabs, or switch apps. Violations trigger warnings or **auto-submit**.
+  
+- **👀 Gaze & Presence Monitoring**:  
+  Uses webcam to track eye movement. **Looking away >5 seconds** = flagged activity.
+
+- **👥 Multi-Face Detection**:  
+  If **>1 face** is detected, the system logs it and may auto-submit the test.
+
+- **📱 Mobile Device Detection (Radar-Like)**:  
+  Scans for phones within **~6 feet** using:
+  - Wi-Fi/BLE proximity signals
+  - IP address correlation (e.g., if the laptop uses a phone hotspot)  
+  → **Detected device = automatic test submission**
+
+- **📹 Full Audit Trail**:  
+  Session recording (video + screen) stored securely for admin review.
+
+### 🔔 Real-Time Notification System
+- Students get instant alerts when a new test is live.
+- Admins receive live notifications when a student starts a test.
+- Interactive bell icon with unread count in the dashboard.
 
 ### 📊 Comprehensive Result Management
-- **Detailed Analytics:**
-    - View individual student results with score breakdown and performance charts.
-    - Dedicated "Results" panel for admins to monitor student progress.
-- **Result Actions:** Admins can delete invalid or test submissions directly from the dashboard.
+- Individual performance reports with score breakdowns and skill-gap analysis.
+- Admin dashboard for class-wide analytics and progress tracking.
+- Delete or regrade invalid/test submissions with one click.
 
-### 📱 Enhanced Mobile Experience
-- **Responsive Design:** Fully optimized sidebar and navigation for mobile devices.
-- **Touch-Friendly:** Improved touch interactions for dashboards and test interfaces.
+### 📱 Mobile-Optimized Experience
+- Fully responsive design with touch-friendly navigation.
+- Works seamlessly on phones and tablets.
+
+---
 
 ## 🛠️ Technology Stack
 
-- **Frontend:** HTML5, CSS3 (Modern UI with Glassmorphism, Responsive), JavaScript (ES6+)
-- **Backend & Database:** Firebase Authentication, Cloud Firestore
-- **AI Engine:** Google Gemini Pro API
-- **Icons & Fonts:** FontAwesome, Google Fonts (Inter, Outfit)
+| Layer          | Technologies |
+|----------------|--------------|
+| **Frontend**   | HTML5, CSS3 (Glassmorphism), JavaScript (ES6+), Responsive Design |
+| **Backend**    | Firebase Authentication, Cloud Firestore |
+| **AI Engine**  | Google Gemini Pro API |
+| **Proctoring** | WebRTC, TensorFlow.js (client-side face/gaze detection), Network scanning (with user consent) |
+| **Coding IDE** | Monaco Editor (VS Code engine) |
+| **Styling**    | FontAwesome, Google Fonts (`Inter`, `Outfit`) |
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are **welcome**! Whether you're improving the proctoring logic, adding new programming languages, or enhancing UI/UX:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4) Push to the branch (`git push origin feature/AmazingFeature`)
+5) Open a **Pull Request**
+
+> Please ensure your code follows our style guide and includes appropriate tests.
+
+---
+
+## 📄 License
+
+This project is currently **private/internal**. Contact the maintainers for usage rights.
+
+---
+
+> **AI_AITM**: Where learning meets intelligence, integrity, and innovation.
